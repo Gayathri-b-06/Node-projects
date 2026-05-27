@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="index.css" />
+  
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>URL Shortener</h1>
+
+    <form id="shorten-form">
+
+      <div class="input-group">
+        <label for="url">Enter Long URL</label>
+        <input type="text" placeholder="https://example.com/very-long-url" name="url" id="url" required>
+      </div>
+
+      <div class="input-group">
+        <label for="short-code">Custom Short Code</label>
+        <input type="text" placeholder="Enter short code" name="short-code" id="short-code" required>
+      </div>
+
+      <button class="submit-btn" type="submit">
+        Shorten URL
+      </button>
+
+    </form>
+    <h2 id="result" class="result-title">shortened urls</h2>
+    <ul id="url-list"></ul>
+  </div>
+  <script >
+
+    const fetchUrls =async()=>{
+      const res=await fetch('/links');
+      const links=await res.json();
+
+      const list=document.getElementById('url-list');
+      list.innerHTML='';
+      for(const[shortcode,url] of Object.entries(links))
+    {
+        const li=document.createElement('li');
+        const truncatedUrl=url.length>40?url.slice(0,40)+'...':url;
+        li.innerHTML=`<a href="/${shortcode}" target="_blank">${window.location.origin}/${shortcode}</a>-${truncatedUrl}`;
+        list.appendChild(li);
+      }
+    };
+
+    document.getElementById('shorten-form').
+    addEventListener('submit',async(event)=>{
+      event.preventDefault();
+      const formdata=new FormData(event.target);
+      const url=formdata.get('url');
+      const shortcode=formdata.get('short-code')
+      console.log(url,shortcode);
+
+      try {
+       const res= await fetch('/shorten',{
+        method:'POST',
+        headers:{'Content-type':'application/json'},
+        body:JSON.stringify({url,shortcode})
+       });
+
+       if(res.ok)
+       {
+        alert("form submitted sucessfully");
+        fetchUrls();
+        event.target.reset();
+       }
+       else{
+        const errmsg=await res.text();
+        alert(errmsg);
+       }
+
+      } catch (error) {
+        console.log(error);
+      }
+    })
+
+    fetchUrls();
+
+  </script>
+</body>
+</html>
+
