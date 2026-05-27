@@ -1,3 +1,9 @@
-# Node Projects 
-1.cli todo app
-2.file creation using node
+# Node.js Mini Projects
+
+## Projects Included
+
+1. CLI Todo App  
+2. File Creation App  
+3. Joke Generator  
+4. Currency Converter  
+5. URL Shortener
